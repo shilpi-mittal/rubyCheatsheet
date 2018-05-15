@@ -1,0 +1,353 @@
+$global_var = 1
+class Vehicle
+  
+  attr_accessor :no_of_wheels # cant be initialized here, can be updated by any class
+  private # private members till next access modifier
+  attr_accessor :type
+  @@message = "in class vehicle"  # one instance will be shared by all objects
+  $global_var =6 # called only when vehicle class object initialized
+  
+  public
+  attr_reader :readAttr
+  attr_writer :writeAttr
+  
+  
+  def get_wheel_count
+    "wheels = " + self.no_of_wheels.to_s # ok as not private
+  end
+  
+   def get_type
+    "type = " +type  # no self as private
+  end
+  
+  def get_message
+    @@message + " of vehicle" +readAttr.to_s # as class variable
+    
+    # writeAttr.to_s # as write only allowed
+  end
+  
+  def initialize (wheels, type)
+    @@message = "in class vehicle"
+    self.no_of_wheels = wheels
+    self.type = type
+    readAttr="hi" #stay nil as only read allowed
+    writeAttr="bye"
+  end
+  
+  def set
+    $global_var =2
+  end
+  
+  private
+  
+  def get_text
+    "in private method"
+  end
+  
+  def method_missing *m
+    m.to_s + " missing in Vehicle"
+  end
+  
+  def private_method
+    "private method"
+  end
+  
+  public
+  
+  def undef_m
+    "undef"
+  end
+  
+  def remove_m
+    "remove"
+  end
+  
+  def undef_m2
+    "undef2"
+  end
+  
+  def play
+    undef undef_m
+  end
+end
+
+module Setter
+  def set_vehicle_detail(wheels)
+    @detail
+    case wheels[-1].to_i   # switch in ruby
+    when 4 then  @detail = "four-wheeler"
+    when 2 then @detail = "two-wheeler"
+    end
+  end
+end
+
+class Car < Vehicle 
+  include Setter
+  
+  @@str
+  
+  def initialize 
+    super 4, "motor"
+    @@message = "in class car"
+    @@str='abc'
+  end
+  
+  def get_message
+    "hi car " + @@message
+  end
+  
+  def get_str
+      
+      @@str.freeze
+      @@str
+    end
+    
+    def set_str input
+      p @@str.frozen?
+      p @@str = input
+    end
+  
+  def method_missing *m
+    m.to_s + " missing in Car"
+  end
+  
+  def undef_m
+    "undef in car"
+  end
+  
+  def remove_m
+    "remove in car"
+  end
+  
+  def undef_m2
+    "undef2 in car"
+  end
+  
+  def play
+    undef undef_m # removes only from calling class
+    
+  end
+  remove_method :remove_m #removes in both parent and child(calling) class
+    undef_method :undef_m2 #removes only from child
+    
+    
+    
+  
+end
+
+class Bike < Vehicle 
+  include Setter
+  
+  def initialize 
+    super 2, "motor"
+    @@message = "in class bike"
+  end
+  
+  def get_message
+    "hi bike" + @@message
+  end
+  
+  def method_missing m
+    m + "missing in Bike"
+  end
+  
+end
+
+p "A=Vehicle.new(3,kl)"
+A = Vehicle.new(3,"kl")
+p A.instance_of? Vehicle
+p A.get_message
+p A.get_wheel_count
+p A.get_type
+p $global_var
+A.set
+p $global_var
+# p A.get_text #error as private method
+p A.send :get_text
+
+p A.to_s
+
+p "B = Car.new"
+B = Car.new
+p B.instance_of? Vehicle
+p B.instance_of? Car
+p B.get_message
+p B.get_wheel_count
+p B.get_type
+p $global_var
+p B.set_vehicle_detail B.get_wheel_count
+p B.send :get_text
+
+p A.to_s
+p B.to_s
+
+p "C = Bike.new"
+C = Bike.new
+p C.get_message
+p C.get_wheel_count
+p C.get_type
+p $global_var
+p C.set_vehicle_detail C.get_wheel_count
+
+p A.to_s
+p B.to_s
+p C.to_s
+
+p A.get_message
+p B.get_message
+p C.get_message
+
+
+p A.eql? B
+p A==B
+
+p "C=A"
+C=A
+p C.instance_of? Vehicle
+p C.instance_of? Bike
+p C.get_message
+p C.get_wheel_count
+p C.get_type
+p $global_var
+# p C.set_vehicle_detail C.get_wheel_count  should give error
+
+p A.to_s
+p B.to_s
+p C.to_s
+
+p "A=B"
+A=B
+p A.get_message
+p A.get_wheel_count
+p A.get_type
+p $global_var
+p A.set_vehicle_detail A.get_wheel_count
+p A.eql? B
+p A==B
+p A===B
+
+p A.to_s
+p B.to_s
+p C.to_s
+
+
+p A.instance_of? Vehicle
+p A.instance_of? Car
+
+# p Car.initialize #as works with private members
+p Car.allocate.get_wheel_count #initialize is not invoked hence no_of_wheels is nil
+
+String str = "foo"
+p str << "bar"
+p str.freeze
+# p str << "buzz" # runtime error as cant be modified
+p str.frozen?
+
+p B.hi_missing
+p C.hi_missing
+
+p C.private_method #missing as private
+
+# Class Test < Vehicle
+ 
+# end
+
+p B.undef_m
+p B.undef_m2
+p B.remove_m
+
+p C.undef_m
+p C.undef_m2
+p C.remove_m
+
+B.play 
+
+p B.undef_m
+p B.undef_m2
+p B.remove_m
+
+p C.undef_m
+p C.undef_m2
+p C.remove_m
+
+C.play 
+
+p B.undef_m
+p B.undef_m2
+p B.remove_m
+
+p C.undef_m
+p C.undef_m2
+p C.remove_m
+
+
+module Greeter
+   def hi
+      "hello"
+   end
+end                     # A silly module
+s = "string object"
+s.extend(Greeter)       # Add hi as a singleton method to s
+p s.hi                    # => "hello"
+String.extend(Greeter)  # Add hi as a class method of String
+p String.hi               # => "hello"
+
+
+
+
+p D = B.clone
+p E = B.dup
+
+p B.is_a? Setter
+p C.is_a? Setter
+
+
+p define_method(:method_name) {p "inside method" }
+method_name
+
+def get_binding(str)
+  return binding
+end
+str = "hello"
+p eval "str + ' Fred'"                      #=> "hello Fred"
+p eval "str + ' Fred'", get_binding("bye")  #=> "bye Fred"
+
+p $SAFE
+p $LOAD_PATH
+
+String str2 = "yu"
+p str2.tainted?
+str2.taint
+p str2.tainted?
+String str3 = str2
+p str3.tainted?
+
+p D.inspect
+p D.to_s
+p D
+#puts D #error
+
+puts "p"
+print "p"
+puts "p"
+
+
+module Foo
+  def foo
+    puts 'heyyyyoooo!'
+  end
+end
+
+class Bar
+  include Foo
+end
+
+Bar.new.foo # heyyyyoooo!
+Bar.foo # NoMethodError: undefined method ‘foo’ for Bar:Class
+
+class Baz
+  extend Foo
+end
+
+Baz.foo # heyyyyoooo!
+Baz.new.foo # NoMethodError: undefined method ‘foo’ for #<Baz:0x1e708>

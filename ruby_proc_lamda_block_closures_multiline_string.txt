@@ -1,0 +1,135 @@
+# block
+
+
+
+def my_method
+  puts "Hello World"
+end
+
+
+my_method {puts "hello" }
+
+def my_method2
+  puts "Hello World"
+  yield
+end
+
+my_method2 {puts "hello" }
+
+def my_method3
+  puts "Hello World"
+  yield if block_given?
+end
+
+my_method3 {puts "hello" }
+
+# Proc
+
+def gen_times(factor)
+  return Proc.new {|n| n*factor }
+end
+
+p times3 = gen_times(3)
+p times5 = gen_times(5)
+
+p times3.call(12)               #=> 36
+p times5.call(5)                #=> 25
+p times3.call(times5.call(4))   #=> 60
+
+p Proc.new {|a,b| [a,b] }.call(1,2,3) #=> [1,2]
+p Proc.new {|a,b| [a,b] }.call(1) #=> [1,nil]
+
+# Lamda
+# lambda {|a,b| [a,b] }.call(1,2,3) # Argument error
+
+p code = -> (x) { x*x }
+ 
+p code.call 4
+
+
+
+def lambda_method
+  lambda { return puts 'lambda' }.call
+  return 'method'
+end
+
+p lambda_method
+
+
+
+def proc_method
+  Proc.new { return puts 'proc' }.call
+  puts 'method'
+end
+
+p proc_method
+
+
+# multiline String
+
+p str = 'this is a multi-line string'\
+  ' using implicit concat'\
+  ' to prevent spare \n\'s'
+  
+  # HEREDOC syntax
+  
+  p <<END_SQL.gsub(/\s+/, " ").strip
+SELECT * FROM     users
+         ORDER BY users.id DESC
+END_SQL
+
+p %{
+SELECT * FROM     users
+         ORDER BY users.id DESC
+}.gsub(/\s+/, " ").strip
+
+
+p [
+  "This is the first line.",
+  "This is the second line.",
+  "1 + 1 is #{1 + 1}."
+].join("\n") + "\n"
+
+#docStyle
+p <<-FOO
+This is the first line.
+This is the second line.
+1 + 1 is #{1 + 1}.
+FOO
+
+p my_str = %q(
+This is the first line.
+This is the second line.
+1 + 1 is #{1 + 1}.
+)
+
+# => "\nThis is the first line.\nThis is the second line\n1 + 1 is \#{1 + 1}.\n"
+# Note the absence of interpolation.
+
+p my_str = %Q(
+This is the first line.
+This is the second line.
+1 + 1 is #{1 + 1}.
+)
+
+# => "\nThis is the first line.\nThis is the second line.\n1 + 1 is 2.\n"
+
+# Note that there is a variant syntax for %Q, which is as follows:
+
+p my_str = %(
+This is the first line.
+This is the second line.
+1 + 1 is #{1 + 1}.
+)
+
+# => "\nThis is the first line.\nThis is the second line.\n1 + 1 is 2.\n"
+
+p "ji",
+  "This is the first line.",
+  "This is the second line.",
+  "1 + 1 is #{1 + 1}."
+  
+p ["ji",
+  "This is the first line.",
+  "This is the second line.",
+  "1 + 1 is #{1 + 1}."]
