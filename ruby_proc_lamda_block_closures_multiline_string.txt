@@ -1,3 +1,4 @@
+
 # block
 
 
@@ -7,14 +8,18 @@ def my_method
 end
 
 
-my_method {puts "hello" }
+my_method {puts "hello" } #=>Hello World
+my_method #=>Hello World
 
 def my_method2
   puts "Hello World"
   yield
 end
 
-my_method2 {puts "hello" }
+my_method2 {puts "hello" } 
+#=>Hello World
+#=>hello
+#my_method2 # error =>`my_method2': no block given (yield) (LocalJumpError)
 
 def my_method3
   puts "Hello World"
@@ -22,6 +27,9 @@ def my_method3
 end
 
 my_method3 {puts "hello" }
+#=>Hello World
+#=>hello
+my_method3 #=>Hello World
 
 # Proc
 
@@ -35,6 +43,12 @@ p times5 = gen_times(5)
 p times3.call(12)               #=> 36
 p times5.call(5)                #=> 25
 p times3.call(times5.call(4))   #=> 60
+
+def divide_times(factor)
+  return Proc.new {|n| n/factor }
+end
+
+p divide_times(3).call(12)               #=> 4
 
 p Proc.new {|a,b| [a,b] }.call(1,2,3) #=> [1,2]
 p Proc.new {|a,b| [a,b] }.call(1) #=> [1,nil]
