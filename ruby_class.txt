@@ -97,15 +97,14 @@ class Car < Vehicle
   end
   
   def get_str
-      
-      @@str.freeze
-      @@str
-    end
-    
-    def set_str input
-      p @@str.frozen?
-      p @@str = input
-    end
+    @@str.freeze
+    @@str
+  end
+
+  def set_str input
+    p @@str.frozen?
+    p @@str = input
+  end
   
   def method_missing *m
     m.to_s + " missing in Car"
@@ -155,102 +154,99 @@ end
 
 p "A=Vehicle.new(3,kl)"
 A = Vehicle.new(3,"kl")
-p A.instance_of? Vehicle
-p A.get_message
-p A.get_wheel_count
-p A.get_type
-p $global_var
+p A.instance_of? Vehicle # => true
+p A.get_message #=> "in class vehicle of vehicle"
+p A.get_wheel_count #=> "wheels = 3"
+p $global_var #=> 6
 A.set
-p $global_var
+p $global_var #=> 2
 # p A.get_text #error as private method
-p A.send :get_text
+p A.send :get_text #=> "in private method"
 
-p A.to_s
+p A.to_s #=> "#<Vehicle:0x0055ef4def09d8>"
 
 p "B = Car.new"
 B = Car.new
-p B.instance_of? Vehicle
-p B.instance_of? Car
-p B.get_message
-p B.get_wheel_count
-p B.get_type
-p $global_var
-p B.set_vehicle_detail B.get_wheel_count
-p B.send :get_text
+p B.instance_of? Vehicle #=> false
+p B.instance_of? Car #=> true
+p B.get_message #=> "hi car in class car"
+p B.get_wheel_count #=> "wheels = 4"
+p B.get_type #=> "type = motor"
+p $global_var #=> 2
+p B.set_vehicle_detail B.get_wheel_count #=> 4
+#=>"four-wheeler"
+p B.send :get_text #=> "in private method"
 
-p A.to_s
-p B.to_s
+p A.to_s #=> "#<Vehicle:0x0055ef4def09d8>"
+p B.to_s #=> "#<Car:0x0055ef4def0230>"
 
 p "C = Bike.new"
 C = Bike.new
-p C.get_message
-p C.get_wheel_count
-p C.get_type
-p $global_var
-p C.set_vehicle_detail C.get_wheel_count
+p C.get_message #=> "hi bikein class bike"
+p C.get_wheel_count #=> 
+p C.get_type #=> "wheels = 2"
+p $global_var #=> "type = motor"
+p C.set_vehicle_detail C.get_wheel_count #=> 2
+#=> "two-wheeler"
 
 p A.to_s
 p B.to_s
-p C.to_s
+p C.to_s #=> "#<Bike:0x0055ef4deef7e0>"
 
-p A.get_message
-p B.get_message
-p C.get_message
+p A.get_message #=> "in class bike of vehicle"
+p B.get_message #=> "hi car in class bike"
+p C.get_message #=> "hi bikein class bike"
 
 
-p A.eql? B
-p A==B
+p A.eql? B #=> false
+p A==B #=> false
 
 p "C=A"
 C=A
-p C.instance_of? Vehicle
-p C.instance_of? Bike
-p C.get_message
-p C.get_wheel_count
-p C.get_type
-p $global_var
+p C.instance_of? Vehicle #=> true
+p C.instance_of? Bike #=> false
+p C.get_message #=> "in class bike of vehicle"
+p C.get_wheel_count #=> "wheels = 3"
+p C.get_type #=> "type = kl"
+p $global_var #=> 2
 # p C.set_vehicle_detail C.get_wheel_count  should give error
 
-p A.to_s
-p B.to_s
-p C.to_s
+p A.to_s #=> "#<Vehicle:0x0055ef4def09d8>"
+p B.to_s #=> "#<Car:0x0055ef4def0230>"
+p C.to_s #=> "#<Vehicle:0x0055ef4def09d8>"
 
 p "A=B"
 A=B
-p A.get_message
-p A.get_wheel_count
-p A.get_type
-p $global_var
-p A.set_vehicle_detail A.get_wheel_count
-p A.eql? B
-p A==B
-p A===B
+p A.get_message #=> "hi car in class bike"
+p A.get_wheel_count #=> "wheels = 4"
+p A.get_type #=> "type = motor"
+p $global_var #=> 2
+p A.set_vehicle_detail A.get_wheel_count #=> "four-wheeler"
+p A.eql? B #=> true
+p A==B #=> true
+p A===B #=> true
 
-p A.to_s
-p B.to_s
-p C.to_s
+p A.to_s #=> "#<Car:0x0055ef4def0230>"
+p B.to_s #=> "#<Car:0x0055ef4def0230>"
+p C.to_s #=> "#<Vehicle:0x0055ef4def09d8>"
 
 
-p A.instance_of? Vehicle
-p A.instance_of? Car
+p A.instance_of? Vehicle #=> false
+p A.instance_of? Car #=> true
 
 # p Car.initialize #as works with private members
-p Car.allocate.get_wheel_count #initialize is not invoked hence no_of_wheels is nil
+p Car.allocate.get_wheel_count #initialize is not invoked hence no_of_wheels is nil #=> "wheels = "
 
 String str = "foo"
-p str << "bar"
-p str.freeze
+p str << "bar" #=> "foobar"
+p str.freeze #=> "foobar"
 # p str << "buzz" # runtime error as cant be modified
-p str.frozen?
+p str.frozen? #=> true
 
 p B.hi_missing
 p C.hi_missing
 
 p C.private_method #missing as private
-
-# Class Test < Vehicle
- 
-# end
 
 p B.undef_m
 p B.undef_m2
